@@ -1,0 +1,59 @@
+﻿@model DapCare.Models.FindStateMent
+
+@{
+    /**/
+
+    ViewBag.Title = "FindStateMent";
+}
+
+
+@using (Html.BeginForm("ShowSateMent", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <br />
+    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "datepicker" } })
+    <br />
+    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "datepicker2" } })
+    <br />
+
+    <div class="form-group">
+        @Html.DropDownListFor(model => model.EmployeId, ViewBag.employelist as SelectList, "--select---", new { @class = "form-control" })
+    </div>
+
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Create" class="btn btn-default" />
+    </div>
+
+}
+
+
+
+@section scripts{
+
+
+
+
+    <script>
+
+        $(function () {
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true,
+                minDate: new Date(2021, 0, 1),
+                maxDate: new Date(2040, 0, 1),
+                showOn: "both"
+            });
+        });
+        $(function () {
+            $(".datepicker2").datepicker({
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true,
+                minDate: new Date(2021, 0, 1),
+                maxDate: new Date(2040, 0, 1),
+                showOn: "both"
+            });
+        });
+    </script>
+
+}
