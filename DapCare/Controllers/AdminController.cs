@@ -16,8 +16,8 @@ namespace DapCare.Controllers
 {
     public class AdminController : Controller
     {
-          string connectionString = @"Data Source =103.125.254.20,9433; Database=db;Trusted_Connection=false;Initial Catalog =DapCare; password=Rahatdapagrocare2020;User Id=dapuser2; Integrated Security  = false;MultipleActiveResultSets=true";
-       //string connectionString = @"Data Source = DESKTOP-2V8523P\SQLEXPRESS;  Initial Catalog =DapCare;  Integrated Security  = true";
+        string connectionString = @"Data Source =(local); Database=db;Trusted_Connection=false;Initial Catalog =DapCare; password=Rahatdapagrocare2020;User Id=dapuser2; Integrated Security  = false;MultipleActiveResultSets=true";
+        //string connectionString = @"Data Source = DESKTOP-2V8523P\SQLEXPRESS;  Initial Catalog =DapCare;  Integrated Security  = true";
         //103.125.254.20,9433
 
         //Create Product
@@ -71,7 +71,8 @@ namespace DapCare.Controllers
         {
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from Packsize", sqlcon);
                 sqlDa.Fill(dtblProduct);
             }
@@ -80,7 +81,8 @@ namespace DapCare.Controllers
 
         [HttpGet]
         public ActionResult Edit(int ProductId)
-        {   Nproduct productlist = new Nproduct();
+        {
+            Nproduct productlist = new Nproduct();
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {
@@ -91,7 +93,8 @@ namespace DapCare.Controllers
                 sqlDa.Fill(dtblProduct);
             }
             if (dtblProduct.Rows.Count == 1)
-            {   productlist.ProdductId = Convert.ToInt32(dtblProduct.Rows[0][0].ToString());
+            {
+                productlist.ProdductId = Convert.ToInt32(dtblProduct.Rows[0][0].ToString());
                 productlist.Name = (dtblProduct.Rows[0][1].ToString());
                 productlist.Description = dtblProduct.Rows[0][2].ToString();
                 productlist.image = dtblProduct.Rows[0][3].ToString();
@@ -110,7 +113,8 @@ namespace DapCare.Controllers
         {
             string pic = null;
             if (file != null)
-            {   pic = System.IO.Path.GetFileName(file.FileName);
+            {
+                pic = System.IO.Path.GetFileName(file.FileName);
                 string path = System.IO.Path.Combine(Server.MapPath("~/Productimg/"), pic);
                 file.SaveAs(path);
                 productlist.image = pic;
@@ -120,7 +124,8 @@ namespace DapCare.Controllers
                 pic = productlist.image;
             }
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "UPDATE Nproduct SET ProductName=@ProductName,Descriptions=@Descriptions,ProductImage=@ProductImage  where Nproductid=@Nproductid";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@ProductName", productlist.Name.ToString());
@@ -134,16 +139,19 @@ namespace DapCare.Controllers
 
         //Deposit
         public ActionResult Deposit()
-        {   List<Employe> employe = GetEmployeList();
+        {
+            List<Employe> employe = GetEmployeList();
             ViewBag.employelist = new SelectList(employe, "EmployeId", "EmployeFirstName");
             return View();
         }
 
         public JsonResult InsertDeposit(string Deposit, string PartyId, string EmployeId)
-        {   DataTable dtbl = new DataTable();
+        {
+            DataTable dtbl = new DataTable();
             int Pid = Convert.ToInt32(PartyId);
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = $"Select  * from Party  where PartyId = @PartyId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", Pid);
@@ -335,10 +343,12 @@ namespace DapCare.Controllers
             return View(dtblProduct);
         }
 
-        public ActionResult ShowDeposit() {
+        public ActionResult ShowDeposit()
+        {
             DataTable dtblDeposit = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = $"Select  * from Deposit ";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.Fill(dtblDeposit);
@@ -381,10 +391,12 @@ namespace DapCare.Controllers
 
         [HttpGet]
         public ActionResult EditDeposit(int id)
-        {   managerparty mgpty = new managerparty();
+        {
+            managerparty mgpty = new managerparty();
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = $"Select  * from Deposit  where DipId = @DipId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@DipId", id);
@@ -395,7 +407,8 @@ namespace DapCare.Controllers
             int partyid = Convert.ToInt32(dtblProduct.Rows[0][1].ToString());
             DataTable employeName = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Select * from  Employe  where EmployeId=@EmployeId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -404,7 +417,8 @@ namespace DapCare.Controllers
             }
             DataTable PartyTable = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Select * from  Party  where PartyId=@PartyId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -416,7 +430,8 @@ namespace DapCare.Controllers
             ViewBag.getAllPartyy = GetMyParty(empid);
 
             if (dtblProduct.Rows.Count == 1)
-            {   mgpty.EmployeId = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+            {
+                mgpty.EmployeId = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
                 mgpty.PartyId = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
                 mgpty.dates = Convert.ToDateTime(dtblProduct.Rows[0][4]);
                 mgpty.Cash = dtblProduct.Rows[0][3].ToString();
@@ -432,22 +447,25 @@ namespace DapCare.Controllers
 
 
         [HttpPost]
-        public ActionResult EditDeposit (managerparty mgprty)
-        {   int Dipid = ((int)Session["DipId"]);
+        public ActionResult EditDeposit(managerparty mgprty)
+        {
+            int Dipid = ((int)Session["DipId"]);
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = $"Select  * from Deposit  where DipId = @DipId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@DipId", Dipid);
                 sqlDa.Fill(dtblProduct);
             }
-    
+
             int emplid = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
             int partyid = Convert.ToInt32(dtblProduct.Rows[0][1].ToString());
             DataTable employeName = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Select * from  Employe  where EmployeId=@EmployeId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -456,16 +474,18 @@ namespace DapCare.Controllers
             }
             DataTable PartyTable = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Select * from  Party  where PartyId=@PartyId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@PartyId", partyid);
                 sqlda.Fill(PartyTable);
             }
-            
+
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "UPDATE Deposit SET PartyId=@PartyId,EmployeId=@EmployeId,Cash=@Cash,Dates=@Dates,PartyEmployeName=@PartyEmployeName,EmployeEmployeName=@EmployeEmployeName where DipId=@DipId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@PartyId", mgprty.PartyId.ToString());
@@ -819,7 +839,8 @@ namespace DapCare.Controllers
         // pdf
 
         public FileResult CreatePdf()
-        {   MemoryStream workStream = new MemoryStream();
+        {
+            MemoryStream workStream = new MemoryStream();
             StringBuilder status = new StringBuilder("");
             DateTime dTime = DateTime.Now;
             //file name to be created   
@@ -903,7 +924,8 @@ namespace DapCare.Controllers
         }
 
         public FileResult CreateStateMent()
-        {   MemoryStream workStream = new MemoryStream();
+        {
+            MemoryStream workStream = new MemoryStream();
             StringBuilder status = new StringBuilder("");
             DateTime dTime = DateTime.Now;
             //file name to be created   
@@ -920,7 +942,7 @@ namespace DapCare.Controllers
             //Create PDF Table  
             //file will created in this path  
             string strAttachment = Server.MapPath("~/Downloads/" + strPDFFileName);
-            PdfWriter.GetInstance(doc,workStream).CloseStream = false;
+            PdfWriter.GetInstance(doc, workStream).CloseStream = false;
             doc.Open();
             //Add Content to PDF   
             doc.Add(AddEmployeinfo(Employeinfo));
@@ -933,17 +955,17 @@ namespace DapCare.Controllers
             byte[] byteInfo = workStream.ToArray();
             workStream.Write(byteInfo, 0, byteInfo.Length);
             workStream.Position = 0;
-           
+
             return File(workStream, "application/pdf", strPDFFileName);
         }
-        public int callDeposit(int  partyid) {
-            DataTable deposit = new DataTable();
+        public int callDeposit(int partyid)
+        {   DataTable deposit = new DataTable();
             int empId = Convert.ToInt32(Session["EmpId"].ToString());
             DateTime StartDate = (DateTime)Session["StartDate"];
             DateTime EndDate = (DateTime)Session["EndDate"];
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-              { sqlcon.Open();
-                String query = "Select * from Deposit  where  EmployeId=@EmployeId and PartyId=@PartyId and Dates between  @StartDate   and @EndDate";
+            {   sqlcon.Open();
+                String query = "Select sum(Cash) from Deposit  where  EmployeId=@EmployeId and PartyId=@PartyId and Dates between  @StartDate   and @EndDate";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
                 sqlda.SelectCommand.Parameters.AddWithValue("@StartDate", StartDate);
@@ -952,24 +974,29 @@ namespace DapCare.Controllers
                 sqlda.Fill(deposit);
             }
             int cash = 0;
-            if (deposit.Rows.Count == 0)
+            if (deposit.Rows[0][0] != DBNull.Value)
             {
-                cash = 0;
-            }
-            else {
-             cash = Convert.ToInt32(deposit.Rows[0][3].ToString());
+               
+                cash = Convert.ToInt32(deposit.Rows[0][0].ToString());
 
+            }
+            else
+            {
+
+                cash = 0;
             }
             return cash;
         }
 
-        public int callcredit(int  partyid){
+        public int callcredit(int partyid)
+        {
             DataTable Credit = new DataTable();
             int empId = Convert.ToInt32(Session["EmpId"].ToString());
             DateTime StartDate = (DateTime)Session["StartDate"];
             DateTime EndDate = (DateTime)Session["EndDate"];
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select Sum(SUmCart.CartSum) as 'total' from SumCart  inner Join EmployeCart  On SumCart.CartNumber=EmployeCart.CartNumber where EmployeCart.EmployeId=@EmployeId and PartyId=@PartyId and Dates between  @StartDate   and @EndDate  Group by EmployeCart.PartyId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
@@ -991,14 +1018,16 @@ namespace DapCare.Controllers
             return cash;
         }
 
-        public int calldue(int  partyid){
+        public int calldue(int partyid)
+        {
             DataTable Credit = new DataTable();
             DataTable deposit = new DataTable();
             int empId = Convert.ToInt32(Session["EmpId"].ToString());
             DateTime StartDate = (DateTime)Session["StartDate"];
             DateTime EndDate = (DateTime)Session["EndDate"];
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select Sum(SUmCart.CartSum) as 'total' from SumCart  inner Join EmployeCart  On SumCart.CartNumber=EmployeCart.CartNumber where EmployeCart.EmployeId=@EmployeId and PartyId=@PartyId and Dates<  @StartDate  Group by EmployeCart.PartyId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
@@ -1007,7 +1036,8 @@ namespace DapCare.Controllers
                 sqlda.Fill(Credit);
             }
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select * from Deposit  where  EmployeId=@EmployeId  and PartyId=@PartyId and Dates <  @StartDate";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
@@ -1043,11 +1073,13 @@ namespace DapCare.Controllers
             return nitblance;
         }
 
-        public string Callpartyname(int partyid) {
+        public string Callpartyname(int partyid)
+        {
             DataTable partytable = new DataTable();
             int empId = Convert.ToInt32(Session["EmpId"].ToString());
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select * from Party  where  EmployeId=@EmployeId  and PartyId=@PartyId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
@@ -1055,22 +1087,25 @@ namespace DapCare.Controllers
                 sqlda.Fill(partytable);
             }
             string name = partytable.Rows[0][1].ToString();
-            return name; 
+            return name;
         }
-        public string callEmploye(int empid) {
+        public string callEmploye(int empid)
+        {
             DataTable Emptable = new DataTable();
             int empId = Convert.ToInt32(Session["EmpId"].ToString());
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select * from Employe  where  EmployeId=@EmployeId  ";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
                 sqlda.Fill(Emptable);
             }
-            string name = Emptable.Rows[0][1].ToString() + "  "+ Emptable.Rows[0][2];
-            return name; 
+            string name = Emptable.Rows[0][1].ToString() + "  " + Emptable.Rows[0][2];
+            return name;
         }
-        protected PdfPTable AddEmployeinfo(PdfPTable tableLayout) {
+        protected PdfPTable AddEmployeinfo(PdfPTable tableLayout)
+        {
             float[] headers = { 30, 35, 35 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 80; //Set the PDF File witdh percentage  
@@ -1088,9 +1123,6 @@ namespace DapCare.Controllers
                 PaddingLeft = 20,
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
-
-        
-
             string employeName = callEmploye(empId);
             AddCellToHeader(tableLayout, "EmployeName");
             AddCellToHeader(tableLayout, "StartDate");
@@ -1100,7 +1132,8 @@ namespace DapCare.Controllers
             AddCellToBody(tableLayout, EndDate.ToString());
             return tableLayout;
         }
-        protected PdfPTable AddTotaldue(PdfPTable tableLayout) {
+        protected PdfPTable AddTotaldue(PdfPTable tableLayout)
+        {
             float[] headers = { 80, 20 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 80; //Set the PDF File witdh percentage  
@@ -1127,11 +1160,12 @@ namespace DapCare.Controllers
 
 
 
-           return tableLayout;
+            return tableLayout;
         }
 
         protected PdfPTable Add_Content_To_PDFStatement(PdfPTable tableLayout)
-        {   float[] headers = { 50,15,15, 20 }; //Header Widths  
+        {
+            float[] headers = { 50, 15, 15, 20 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 80; //Set the PDF File witdh percentage  
             tableLayout.HeaderRows = 1;
@@ -1145,14 +1179,16 @@ namespace DapCare.Controllers
             int depocalc = 0;
             int sum;
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select * from Party where EmployeId=@EmployeId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
                 sqlda.Fill(partytable);
             }
             tableLayout.AddCell(new PdfPCell(new Phrase("", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
-            {   Colspan = 12,
+            {
+                Colspan = 12,
                 Border = 0,
                 PaddingBottom = 5,
                 PaddingLeft = 20,
@@ -1162,10 +1198,11 @@ namespace DapCare.Controllers
             AddCellToHeader(tableLayout, "Credit");
             AddCellToHeader(tableLayout, "Deposit");
             AddCellToHeader(tableLayout, "Due");
-            for (int i=0;i<partytable.Rows.Count;i++) {
+            for (int i = 0; i < partytable.Rows.Count; i++)
+            {
                 int depositt = callDeposit(Convert.ToInt32(partytable.Rows[i][0].ToString()));
-                int credit =  callcredit(Convert.ToInt32(partytable.Rows[i][0].ToString()));
-                int due =     calldue(Convert.ToInt32(partytable.Rows[i][0].ToString()));
+                int credit = callcredit(Convert.ToInt32(partytable.Rows[i][0].ToString()));
+                int due = calldue(Convert.ToInt32(partytable.Rows[i][0].ToString()));
                 string partyName = Callpartyname(Convert.ToInt32(partytable.Rows[i][0].ToString()));
                 AddCellToBody(tableLayout, partyName.ToString());
                 AddCellToBody(tableLayout, credit.ToString());
@@ -1185,13 +1222,13 @@ namespace DapCare.Controllers
 
             //AddCellToHeader(tableLayout, dtblsum.Rows[0][2].ToString());
 
-            sum = ((duecal+creditcalc)-depocalc);
-            Session["sum"]= sum;
+            sum = ((duecal + creditcalc) - depocalc);
+            Session["sum"] = sum;
             Session["due"] = duecal;
             Session["credit"] = creditcalc;
             Session["deposit"] = depocalc;
             return tableLayout;
-        }  
+        }
 
 
 
@@ -1239,7 +1276,8 @@ namespace DapCare.Controllers
 
 
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "UPDATE Stock SET Quantity=@Quantity  where productId=@productId and PackSizeId=@PackSizeId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@Quantity", updatequantity);
@@ -1276,7 +1314,8 @@ namespace DapCare.Controllers
             AddCellToHeader(tableLayout2, "Amount");
             double mytotalbill = 0;
             for (int i = 0; i < dtblProduct.Rows.Count; i++)
-            {   int z = i + 1;
+            {
+                int z = i + 1;
                 double g = Convert.ToDouble(dtblProduct.Rows[i][4].ToString());
                 double p = g / 100;
                 double storeunit = Convert.ToDouble(dtblProduct.Rows[i][9].ToString());
@@ -1443,7 +1482,8 @@ namespace DapCare.Controllers
 
 
         protected PdfPTable Add_Content_To_PDFemp(PdfPTable tableLayout)
-        {   float[] headers = { 13, 22, 15, 25, 25 }; //Header Widths  
+        {
+            float[] headers = { 13, 22, 15, 25, 25 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 80; //Set the PDF File witdh percentage  
             tableLayout.HeaderRows = 1;
@@ -1461,8 +1501,10 @@ namespace DapCare.Controllers
 
             string cash = EmployeCart.Rows[0][4].ToString();
             if (cash != "")
-            {   tableLayout.AddCell(new PdfPCell(new Phrase("Invoice Table" + "(" + cash + ")", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
-                {   Colspan = 12,
+            {
+                tableLayout.AddCell(new PdfPCell(new Phrase("Invoice Table" + "(" + cash + ")", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
+                {
+                    Colspan = 12,
                     Border = 0,
                     PaddingBottom = 5,
                     HorizontalAlignment = Element.ALIGN_CENTER
@@ -1470,7 +1512,8 @@ namespace DapCare.Controllers
 
             }
             else
-            {   tableLayout.AddCell(new PdfPCell(new Phrase("Invoice Table", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
+            {
+                tableLayout.AddCell(new PdfPCell(new Phrase("Invoice Table", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
                 {
                     Colspan = 12,
                     Border = 0,
@@ -1519,7 +1562,8 @@ namespace DapCare.Controllers
 
 
         protected PdfPTable Download_Add_Content_To_PDFemp(PdfPTable tableLayout)
-        {   float[] headers = { 13, 22, 15, 25, 25 }; //Header Widths  
+        {
+            float[] headers = { 13, 22, 15, 25, 25 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 80; //Set the PDF File witdh percentage  
             tableLayout.HeaderRows = 1;
@@ -1527,7 +1571,8 @@ namespace DapCare.Controllers
 
             //List<Employee> employees = _context.employees.ToList<Employee>();
             tableLayout.AddCell(new PdfPCell(new Phrase("Invoice Table", new Font(Font.FontFamily.HELVETICA, 8, 1, new iTextSharp.text.BaseColor(0, 0, 0))))
-            {   Colspan = 12,
+            {
+                Colspan = 12,
                 Border = 0,
                 PaddingBottom = 5,
                 HorizontalAlignment = Element.ALIGN_CENTER
@@ -1535,7 +1580,8 @@ namespace DapCare.Controllers
             int mycartnumber = Convert.ToInt32(Session["downloadcartid"].ToString());
             DataTable EmployeCart = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   int cons = 1;
+            {
+                int cons = 1;
                 sqlcon.Open();
                 string query = "Select  * from EmployeCart where CartNumber=@CartNumber";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -1544,7 +1590,8 @@ namespace DapCare.Controllers
             }
             DataTable dtblemploye = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   int cons = 1;
+            {
+                int cons = 1;
                 sqlcon.Open();
                 string query = "Select  * from Employe where EmployeId=@EmployeId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -1553,7 +1600,7 @@ namespace DapCare.Controllers
             }
 
             string cash = EmployeCart.Rows[0][4].ToString();
-             ////Add header  
+            ////Add header  
             ///
             AddCellToHeader(tableLayout, "InvoiceNo");
             AddCellToHeader(tableLayout, "Employeename");
@@ -1568,7 +1615,8 @@ namespace DapCare.Controllers
             int mycartnumberid = Convert.ToInt32(Session["downloadcartid"].ToString());
 
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select * from SumCart where CartNumber=@CartNumber";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@CartNumber", mycartnumberid);
@@ -2415,20 +2463,22 @@ namespace DapCare.Controllers
                 redirectUrl = Url.Action("ViewManagerparty", "Admin"),
                 isRedirect = true
             });
-           
+
 
         }
         //InsertDeposit
         //Cash= Deposit Amount
-        public JsonResult TestDeposit(string EmployeId, string PartyId, string Cash,string dates)
-        {   int Cashs = Convert.ToInt32(Cash);
+        public JsonResult TestDeposit(string EmployeId, string PartyId, string Cash, string dates)
+        {
+            int Cashs = Convert.ToInt32(Cash);
             int PtyId = Convert.ToInt32(PartyId);
             int EId = Convert.ToInt32(EmployeId);
             DateTime dt = DateTime.Now;
             String date = dt.ToShortDateString();
-            DataTable employeName=new DataTable();
+            DataTable employeName = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Select * from  Employe  where EmployeId=@EmployeId";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
@@ -2447,7 +2497,8 @@ namespace DapCare.Controllers
             }
 
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = "Insert into Deposit  values(@PartyId,@EmployeId,@Cash,@Dates,@PartyEmployeName,@EmployeEmployeName)";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@PartyId", PtyId);
@@ -2455,37 +2506,41 @@ namespace DapCare.Controllers
                 sqlCmd.Parameters.AddWithValue("@Cash", Cashs);
                 sqlCmd.Parameters.AddWithValue("@Dates", dates);
                 sqlCmd.Parameters.AddWithValue("@PartyEmployeName", PartyTable.Rows[0][1].ToString());
-                sqlCmd.Parameters.AddWithValue("@EmployeEmployeName", employeName.Rows[0][1].ToString()+ ' '+ employeName.Rows[0][2].ToString());
+                sqlCmd.Parameters.AddWithValue("@EmployeEmployeName", employeName.Rows[0][1].ToString() + ' ' + employeName.Rows[0][2].ToString());
                 sqlCmd.ExecuteNonQuery();
             }
             return Json(new
             {
-                redirectUrl = Url.Action("Deposit", "Admin"),
+                redirectUrl = Url.Action("ShowDeposit", "Admin"),
                 isRedirect = true
             });
 
 
         }
 
-        
-        public ActionResult Test() {
+
+        public ActionResult Test()
+        {
             return View();
         }
-     
+
         public ActionResult FindStateMent()
-        {   List<Employe> employe = GetEmployeList();
+        {
+            List<Employe> employe = GetEmployeList();
             ViewBag.employelist = new SelectList(employe, "EmployeId", "EmployeFirstName");
             return View();
 
         }
-        public ActionResult ShowSateMent(FindStateMent fdsmnt) {
+        public ActionResult ShowSateMent(FindStateMent fdsmnt)
+        {
             DataTable deposit = new DataTable();
             DataTable Credit = new DataTable();
             Session["EmpId"] = fdsmnt.EmployeId;
             Session["StartDate"] = fdsmnt.StartDate;
             Session["EndDate"] = fdsmnt.EndDate;
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 String query = "Select Sum(SUmCart.CartSum) as 'total',PartyId from SumCart  inner Join EmployeCart  On SumCart.CartNumber=EmployeCart.CartNumber where EmployeCart.EmployeId=@EmployeId  and Dates between  @StartDate   and @EndDate  Group by EmployeCart.PartyId";
                 SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
                 sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", fdsmnt.EmployeId);
@@ -2493,28 +2548,46 @@ namespace DapCare.Controllers
                 sqlda.SelectCommand.Parameters.AddWithValue("@EndDate", fdsmnt.EndDate);
                 sqlda.Fill(Credit);
             }
+            DataTable deposits = new DataTable();
+            int empId = Convert.ToInt32(Session["EmpId"].ToString());
+            DateTime StartDate = (DateTime)Session["StartDate"];
+            DateTime EndDate = (DateTime)Session["EndDate"];
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {
+                sqlcon.Open();
+                String query = "Select * from Deposit  where  EmployeId=@EmployeId and Dates between  @StartDate   and @EndDate";
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
+                sqlda.SelectCommand.Parameters.AddWithValue("@StartDate", StartDate);
+                sqlda.SelectCommand.Parameters.AddWithValue("@EndDate", EndDate);
+                
+                sqlda.Fill(deposits);
+            }
 
-            return View(Credit);
+            return View(deposits);
         }
 
 
 
         public JsonResult SearchManagerParty(string EmployeId, string PartyId, string Cash)
-        {   Session["PartyId"] = PartyId;
+        {
+            Session["PartyId"] = PartyId;
             Session["ManagerId"] = EmployeId;
             int mycartnumber = GetMyCartNumber();
             DataTable dtblPackSize = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from EmployeCart  where EmployeId=@EmployeId  AND PartyId=@PartyId", sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@EmployeId", EmployeId);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", PartyId);
                 sqlDa.Fill(dtblPackSize);
             }
-            
+
             DataTable dtblFIN = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from SumCart  where  CartNumber=@CartNumber  AND  Dates >= CURRENT_TIMESTAMP -7  ", sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@CartNumber", dtblPackSize.Rows[0][2]);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", PartyId);
@@ -2527,7 +2600,8 @@ namespace DapCare.Controllers
         }
 
         public ActionResult Searchorder()
-        {   List<Employe> employe = GetEmployeList();
+        {
+            List<Employe> employe = GetEmployeList();
             ViewBag.employelist = new SelectList(employe, "EmployeId", "EmployeFirstName");
             return View();
 
@@ -2541,11 +2615,13 @@ namespace DapCare.Controllers
 
 
         public ActionResult ViewManagerparty()
-        {   int PartyId = Convert.ToInt32(Session["PartyId"].ToString());
+        {
+            int PartyId = Convert.ToInt32(Session["PartyId"].ToString());
             DataTable dtblPackSize = new DataTable();
             int CartNumber = GetMyCartNumber();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from Party  where  PartyId=@PartyId", sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", PartyId);
                 sqlDa.Fill(dtblPackSize);
@@ -2555,10 +2631,12 @@ namespace DapCare.Controllers
 
 
         public ActionResult ViewSelectedProducts()
-        {   DataTable dtblPackSize = new DataTable();
+        {
+            DataTable dtblPackSize = new DataTable();
             int CartNumber = GetMyCartNumber();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from InsertBillUnit  where  CartNumber=@CartNumber", sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@CartNumber", CartNumber);
                 sqlDa.Fill(dtblPackSize);
@@ -2580,10 +2658,12 @@ namespace DapCare.Controllers
             return RedirectToAction("ViewSelectedProducts");
         }
         public List<SelectListItem> GetMyEmployeeName()
-        {   List<SelectListItem> list = new List<SelectListItem>();
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
             DataTable dtbl = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("select * from Employe ", sqlcon);
                 sqlDa.Fill(dtbl);
                 foreach (DataRow item in dtbl.Rows)
@@ -2602,7 +2682,8 @@ namespace DapCare.Controllers
             List<SelectListItem> list = new List<SelectListItem>();
             DataTable dtbl = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {   sqlcon.Open();
+            {
+                sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("select * from Employe where EmployeId=@EmployeId", sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
                 sqlDa.Fill(dtbl);
@@ -2776,18 +2857,21 @@ namespace DapCare.Controllers
 
         [HttpGet]
         public ActionResult EditParty(int PartyId)
-        {   ViewBag.getAllEMployee = GetMyEmployeeName();
+        {
+            ViewBag.getAllEMployee = GetMyEmployeeName();
             party party = new party();
             DataTable dtblparty = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {  sqlcon.Open();
+            {
+                sqlcon.Open();
                 string query = $"Select  * from Party  where PartyId = @PartyId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", PartyId);
                 sqlDa.Fill(dtblparty);
             }
             if (dtblparty.Rows.Count == 1)
-            {  party.EmployeId = Convert.ToInt32(dtblparty.Rows[0][0].ToString());
+            {
+                party.EmployeId = Convert.ToInt32(dtblparty.Rows[0][0].ToString());
                 party.PartyName = dtblparty.Rows[0][1].ToString();
                 party.PartyPhoneNumber = dtblparty.Rows[0][2].ToString();
                 party.PartyAddress = dtblparty.Rows[0][3].ToString();
@@ -2873,7 +2957,7 @@ namespace DapCare.Controllers
         public ActionResult login(string email, string pass)
         {
             string setmail = "mir@gmail.com";
-            string SetPassword = "12345";
+            string SetPassword = "state2021";
 
             if (email == setmail.ToString() && pass == SetPassword.ToString())
             {
