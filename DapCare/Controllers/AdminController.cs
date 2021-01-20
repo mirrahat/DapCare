@@ -71,8 +71,7 @@ namespace DapCare.Controllers
         {
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {   sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from Packsize", sqlcon);
                 sqlDa.Fill(dtblProduct);
             }
@@ -81,8 +80,7 @@ namespace DapCare.Controllers
 
         [HttpGet]
         public ActionResult Edit(int ProductId)
-        {
-            Nproduct productlist = new Nproduct();
+        {   Nproduct productlist = new Nproduct();
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {
@@ -93,13 +91,10 @@ namespace DapCare.Controllers
                 sqlDa.Fill(dtblProduct);
             }
             if (dtblProduct.Rows.Count == 1)
-            {
-                productlist.ProdductId = Convert.ToInt32(dtblProduct.Rows[0][0].ToString());
+            {   productlist.ProdductId = Convert.ToInt32(dtblProduct.Rows[0][0].ToString());
                 productlist.Name = (dtblProduct.Rows[0][1].ToString());
-
                 productlist.Description = dtblProduct.Rows[0][2].ToString();
                 productlist.image = dtblProduct.Rows[0][3].ToString();
-
                 return View(productlist);
             }
             else
@@ -115,8 +110,7 @@ namespace DapCare.Controllers
         {
             string pic = null;
             if (file != null)
-            {
-                pic = System.IO.Path.GetFileName(file.FileName);
+            {   pic = System.IO.Path.GetFileName(file.FileName);
                 string path = System.IO.Path.Combine(Server.MapPath("~/Productimg/"), pic);
                 file.SaveAs(path);
                 productlist.image = pic;
@@ -126,12 +120,10 @@ namespace DapCare.Controllers
                 pic = productlist.image;
             }
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {   sqlcon.Open();
                 string query = "UPDATE Nproduct SET ProductName=@ProductName,Descriptions=@Descriptions,ProductImage=@ProductImage  where Nproductid=@Nproductid";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@ProductName", productlist.Name.ToString());
-
                 sqlCmd.Parameters.AddWithValue("@Descriptions", productlist.Description.ToString());
                 sqlCmd.Parameters.AddWithValue("@ProductImage", productlist.image.ToString());
                 sqlCmd.Parameters.AddWithValue("@Nproductid", productlist.ProdductId);
@@ -142,21 +134,16 @@ namespace DapCare.Controllers
 
         //Deposit
         public ActionResult Deposit()
-        {
-            List<Employe> employe = GetEmployeList();
+        {   List<Employe> employe = GetEmployeList();
             ViewBag.employelist = new SelectList(employe, "EmployeId", "EmployeFirstName");
             return View();
-
-      
         }
 
         public JsonResult InsertDeposit(string Deposit, string PartyId, string EmployeId)
-        {
-            DataTable dtbl = new DataTable();
+        {   DataTable dtbl = new DataTable();
             int Pid = Convert.ToInt32(PartyId);
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {   sqlcon.Open();
                 string query = $"Select  * from Party  where PartyId = @PartyId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", Pid);
@@ -348,6 +335,18 @@ namespace DapCare.Controllers
             return View(dtblProduct);
         }
 
+        public ActionResult ShowDeposit() {
+            DataTable dtblDeposit = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = $"Select  * from Deposit ";
+                SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
+                sqlDa.Fill(dtblDeposit);
+            }
+
+
+            return View(dtblDeposit);
+        }
 
         [HttpGet]
         public ActionResult EditEmploye(int EmployeId)
@@ -379,6 +378,109 @@ namespace DapCare.Controllers
 
         }
 
+
+        [HttpGet]
+        public ActionResult EditDeposit(int id)
+        {   managerparty mgpty = new managerparty();
+            DataTable dtblProduct = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = $"Select  * from Deposit  where DipId = @DipId";
+                SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
+                sqlDa.SelectCommand.Parameters.AddWithValue("@DipId", id);
+                sqlDa.Fill(dtblProduct);
+            }
+            Session["DipId"] = id;
+            int emplid = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+            int partyid = Convert.ToInt32(dtblProduct.Rows[0][1].ToString());
+            DataTable employeName = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "Select * from  Employe  where EmployeId=@EmployeId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", emplid);
+                sqlda.Fill(employeName);
+            }
+            DataTable PartyTable = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "Select * from  Party  where PartyId=@PartyId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@PartyId", partyid);
+                sqlda.Fill(PartyTable);
+            }
+            int empid = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+            ViewBag.getAllEMployee = GetMyEmployeeNameById(emplid);
+            ViewBag.getAllPartyy = GetMyParty(empid);
+
+            if (dtblProduct.Rows.Count == 1)
+            {   mgpty.EmployeId = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+                mgpty.PartyId = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+                mgpty.dates = Convert.ToDateTime(dtblProduct.Rows[0][4]);
+                mgpty.Cash = dtblProduct.Rows[0][3].ToString();
+                return View(mgpty);
+            }
+            else
+            {
+                return RedirectToAction("EmployeRecord");
+            }
+
+        }
+
+
+
+        [HttpPost]
+        public ActionResult EditDeposit (managerparty mgprty)
+        {   int Dipid = ((int)Session["DipId"]);
+            DataTable dtblProduct = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = $"Select  * from Deposit  where DipId = @DipId";
+                SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
+                sqlDa.SelectCommand.Parameters.AddWithValue("@DipId", Dipid);
+                sqlDa.Fill(dtblProduct);
+            }
+    
+            int emplid = Convert.ToInt32(dtblProduct.Rows[0][2].ToString());
+            int partyid = Convert.ToInt32(dtblProduct.Rows[0][1].ToString());
+            DataTable employeName = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "Select * from  Employe  where EmployeId=@EmployeId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", emplid);
+                sqlda.Fill(employeName);
+            }
+            DataTable PartyTable = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "Select * from  Party  where PartyId=@PartyId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@PartyId", partyid);
+                sqlda.Fill(PartyTable);
+            }
+            
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "UPDATE Deposit SET PartyId=@PartyId,EmployeId=@EmployeId,Cash=@Cash,Dates=@Dates,PartyEmployeName=@PartyEmployeName,EmployeEmployeName=@EmployeEmployeName where DipId=@DipId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                sqlCmd.Parameters.AddWithValue("@PartyId", mgprty.PartyId.ToString());
+                sqlCmd.Parameters.AddWithValue("@EmployeId", mgprty.EmployeId.ToString());
+                sqlCmd.Parameters.AddWithValue("@Cash", mgprty.Cash.ToString());
+                sqlCmd.Parameters.AddWithValue("@Dates", mgprty.dates.ToString());
+                sqlCmd.Parameters.AddWithValue("@Dipid", Dipid);
+                sqlCmd.Parameters.AddWithValue("@PartyEmployeName", PartyTable.Rows[0][1].ToString());
+                sqlCmd.Parameters.AddWithValue("@EmployeEmployeName", employeName.Rows[0][5].ToString());
+                sqlCmd.ExecuteNonQuery();
+            }
+            return RedirectToAction("EmployeRecord");
+        }
+
+
         [HttpPost]
         public ActionResult EditEmploye(Employe employe, HttpPostedFileBase file)
         {
@@ -409,6 +511,11 @@ namespace DapCare.Controllers
             }
             return RedirectToAction("EmployeRecord");
         }
+
+
+
+
+
         public ActionResult Showdeletepirtyfirst()
         {
 
@@ -1727,12 +1834,6 @@ namespace DapCare.Controllers
             AddCellToBody(tableLayout, dtblemploye.Rows[0][2].ToString());
             AddCellToBody(tableLayout, dtblemploye.Rows[0][3].ToString());
 
-
-
-
-            ////Add header  
-            ///
-
             return tableLayout;
         }
 
@@ -2319,21 +2420,42 @@ namespace DapCare.Controllers
         }
         //InsertDeposit
         //Cash= Deposit Amount
-        public JsonResult TestDeposit(string EmployeId, string PartyId, string Cash)
+        public JsonResult TestDeposit(string EmployeId, string PartyId, string Cash,string dates)
         {   int Cashs = Convert.ToInt32(Cash);
             int PtyId = Convert.ToInt32(PartyId);
             int EId = Convert.ToInt32(EmployeId);
             DateTime dt = DateTime.Now;
             String date = dt.ToShortDateString();
+            DataTable employeName=new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                string query = "Select * from  Employe  where EmployeId=@EmployeId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@EmployeId", EId);
+                sqlda.Fill(employeName);
+            }
+            DataTable PartyTable = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {
+                sqlcon.Open();
+                string query = "Select * from  Party  where PartyId=@PartyId";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
+                SqlDataAdapter sqlda = new SqlDataAdapter(query, sqlcon);
+                sqlda.SelectCommand.Parameters.AddWithValue("@PartyId", PtyId);
+                sqlda.Fill(PartyTable);
+            }
 
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {   sqlcon.Open();
-                string query = "Insert into Deposit  values(@PartyId,@EmployeId,@Cash,@Dates)";
+                string query = "Insert into Deposit  values(@PartyId,@EmployeId,@Cash,@Dates,@PartyEmployeName,@EmployeEmployeName)";
                 SqlCommand sqlCmd = new SqlCommand(query, sqlcon);
                 sqlCmd.Parameters.AddWithValue("@PartyId", PtyId);
                 sqlCmd.Parameters.AddWithValue("@EmployeId", EId);
                 sqlCmd.Parameters.AddWithValue("@Cash", Cashs);
-                sqlCmd.Parameters.AddWithValue("@Dates", date);
+                sqlCmd.Parameters.AddWithValue("@Dates", dates);
+                sqlCmd.Parameters.AddWithValue("@PartyEmployeName", PartyTable.Rows[0][1].ToString());
+                sqlCmd.Parameters.AddWithValue("@EmployeEmployeName", employeName.Rows[0][1].ToString()+ ' '+ employeName.Rows[0][2].ToString());
                 sqlCmd.ExecuteNonQuery();
             }
             return Json(new
@@ -2344,6 +2466,8 @@ namespace DapCare.Controllers
 
 
         }
+
+        
         public ActionResult Test() {
             return View();
         }
@@ -2456,12 +2580,10 @@ namespace DapCare.Controllers
             return RedirectToAction("ViewSelectedProducts");
         }
         public List<SelectListItem> GetMyEmployeeName()
-        {
-            List<SelectListItem> list = new List<SelectListItem>();
+        {   List<SelectListItem> list = new List<SelectListItem>();
             DataTable dtbl = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {   sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("select * from Employe ", sqlcon);
                 sqlDa.Fill(dtbl);
                 foreach (DataRow item in dtbl.Rows)
@@ -2471,6 +2593,47 @@ namespace DapCare.Controllers
             }
             return list;
         }
+
+
+
+
+        public List<SelectListItem> GetMyEmployeeNameById(int empId)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            DataTable dtbl = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {   sqlcon.Open();
+                SqlDataAdapter sqlDa = new SqlDataAdapter("select * from Employe where EmployeId=@EmployeId", sqlcon);
+                sqlDa.SelectCommand.Parameters.AddWithValue("@EmployeId", empId);
+                sqlDa.Fill(dtbl);
+                foreach (DataRow item in dtbl.Rows)
+                {
+                    list.Add(new SelectListItem { Value = item["EmployeId"].ToString(), Text = item["EmployeFirstName"].ToString() });
+                }
+            }
+            return list;
+        }
+
+        public List<SelectListItem> GetMyParty(int id)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            DataTable dtbl = new DataTable();
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {
+                sqlcon.Open();
+                SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from Party  where  EmployeId=@EmployeId", sqlcon);
+                sqlDa.SelectCommand.Parameters.AddWithValue("@EmployeId", id);
+                sqlDa.Fill(dtbl);
+                foreach (DataRow item in dtbl.Rows)
+                {
+                    list.Add(new SelectListItem { Value = item["PartyId"].ToString(), Text = item["PartName"].ToString() });
+                }
+            }
+            return list;
+        }
+
+
+
         public ActionResult SelectEmployee()
         {
             ViewBag.getAllEMployee = GetMyEmployeeName();
@@ -2613,21 +2776,18 @@ namespace DapCare.Controllers
 
         [HttpGet]
         public ActionResult EditParty(int PartyId)
-        {
-            ViewBag.getAllEMployee = GetMyEmployeeName();
+        {   ViewBag.getAllEMployee = GetMyEmployeeName();
             party party = new party();
             DataTable dtblparty = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {  sqlcon.Open();
                 string query = $"Select  * from Party  where PartyId = @PartyId";
                 SqlDataAdapter sqlDa = new SqlDataAdapter(query, sqlcon);
                 sqlDa.SelectCommand.Parameters.AddWithValue("@PartyId", PartyId);
                 sqlDa.Fill(dtblparty);
             }
             if (dtblparty.Rows.Count == 1)
-            {
-                party.EmployeId = Convert.ToInt32(dtblparty.Rows[0][0].ToString());
+            {  party.EmployeId = Convert.ToInt32(dtblparty.Rows[0][0].ToString());
                 party.PartyName = dtblparty.Rows[0][1].ToString();
                 party.PartyPhoneNumber = dtblparty.Rows[0][2].ToString();
                 party.PartyAddress = dtblparty.Rows[0][3].ToString();

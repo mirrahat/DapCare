@@ -9,11 +9,11 @@
 
 @using (Html.BeginForm("ShowSateMent", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    <br />
+    <br/>
     @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "datepicker" } })
-    <br />
+    <br/>
     @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "datepicker2" } })
-    <br />
+    <br/>
 
     <div class="form-group">
         @Html.DropDownListFor(model => model.EmployeId, ViewBag.employelist as SelectList, "--select---", new { @class = "form-control" })
