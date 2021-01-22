@@ -977,7 +977,7 @@ namespace DapCare.Controllers
             if (deposit.Rows[0][0] != DBNull.Value)
             {
                
-                cash = Convert.ToInt32(deposit.Rows[0][0].ToString());
+                cash = Convert.ToInt32(deposit.Rows[0][0]);
 
             }
             else
@@ -1012,7 +1012,7 @@ namespace DapCare.Controllers
             }
             else
             {
-                cash = Convert.ToInt32(Credit.Rows[0][0].ToString());
+                cash = Convert.ToInt32(Credit.Rows[0][0]);
 
             }
             return cash;
@@ -1048,25 +1048,33 @@ namespace DapCare.Controllers
             int depositcash;
             int Creditcash;
             int cash = 0;
-            if (deposit.Rows.Count == 0)
+           
+
+            if ( deposit.Rows.Count==0 || deposit.Rows[0][0] == DBNull.Value)
             {
+
                 depositcash = 0;
+               
+
             }
             else
             {
-                depositcash = Convert.ToInt32(deposit.Rows[0][3].ToString());
 
+                depositcash = Convert.ToInt32(deposit.Rows[0][0]);
             }
-
-            if (Credit.Rows.Count == 0)
+            if (Credit.Rows.Count==0  || Credit.Rows[0][0] == DBNull.Value)
             {
+
                 Creditcash = 0;
             }
             else
             {
-                Creditcash = Convert.ToInt32(Credit.Rows[0][0].ToString());
+                Creditcash = Convert.ToInt32(Credit.Rows[0][0]);
 
+
+                
             }
+
 
             int nitblance = depositcash - Creditcash;
 
@@ -2115,13 +2123,11 @@ namespace DapCare.Controllers
             List<Nproduct> list = new List<Nproduct>();
             DataTable dtblProduct = new DataTable();
             using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+            {   sqlcon.Open();
                 SqlDataAdapter sqlDa = new SqlDataAdapter("Select * from Nproduct", sqlcon);
                 sqlDa.Fill(dtblProduct);
                 foreach (DataRow item in dtblProduct.Rows)
-                {
-                    list.Add(new Nproduct()
+                {   list.Add(new Nproduct()
                     {
                         ProdductId = Convert.ToInt32(item["Nproductid"]),
                         Name = item["ProductName"].ToString(),
